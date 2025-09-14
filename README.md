@@ -24,32 +24,33 @@ Our model is trained end-to-end with a composite objective function. The total t
 
 This loss ensures the model generates the correct CoT explanations and final answers across the three forward passes.
 
-- Decoder Mode Loss ($L_{\text{decode}}$): Trains the model to reconstruct the explicit CoT text ($Y_{\text{cot}}$) from the implicit tokens.
+- **Decoder Mode Loss** ($L_{\text{decode}}$): Trains the model to reconstruct the explicit CoT text ($Y_{\text{cot}}$) from the implicit tokens.
     $$
-    L_{\text{decode}} = -\sum_{t=1}^{|Y_{\text{cot}}|} \log P(y_t^{\text{cot}} | y_{<t}^{\text{cot}}, \text{pause}; \theta)
-    $$
-
-- Answer Mode Loss ($\mathcal{L}_{\text{answer}}$): Supervises the model to predict the final answer ($Y_{\text{ans}}$) after its implicit reasoning process.
-    $$
-    \mathcal{L}_{\text{answer}} = -\sum_{t=1}^{|Y_{\text{ans}}|} \log P(y_t^{\text{ans}} | y_{<t}^{\text{ans}}, V, Q, \text{pause}; \theta)
+    L_{\text{decode}} = -\sum_{t=1}^{|Y_{\text{cot}}|} \log P(y_t^{\text{cot}} \mid y_{<t}^{\text{cot}}, \text{pause}; \theta)
     $$
 
-- Teacher Model Loss ($\mathcal{L}_{\text{teacher}}$): The standard loss for the explicit CoT model, which generates both the CoT and the answer.
+- **Answer Mode Loss** ($\mathcal{L}_{\text{answer}}$): Supervises the model to predict the final answer ($Y_{\text{ans}}$) after its implicit reasoning process.
     $$
-    \mathcal{L}_{\text{teacher}} = -\sum_{t=1}^{|Y_{\text{cot}}|+|Y_{\text{ans}}|} \log P(y_t | y_{<t}, V, Q; \theta)
+    \mathcal{L}_{\text{answer}} = -\sum_{t=1}^{|Y_{\text{ans}}|} \log P(y_t^{\text{ans}} \mid y_{<t}^{\text{ans}}, V, Q, \text{pause}; \theta)
+    $$
+
+- **Teacher Model Loss** ($\mathcal{L}_{\text{teacher}}$): The standard loss for the explicit CoT model, which generates both the CoT and the answer.
+    $$
+    \mathcal{L}_{\text{teacher}} = -\sum_{t=1}^{|Y_{\text{cot}}| + |Y_{\text{ans}}|} \log P(y_t \mid y_{<t}, V, Q; \theta)
     $$
 
 The total task-oriented loss, $\mathcal{L}_{\text{task}}$, is the weighted sum of these three components:
 $$
-\mathcal{L}_{\text{task}} = 0.5 * \mathcal{L}_{\text{decode}} + 0.5 * \mathcal{L}_{\text{answer}} +  \mathcal{L}_{\text{teacher}}
+\mathcal{L}_{\text{task}} = 0.5 \cdot \mathcal{L}_{\text{decode}} + 0.5 \cdot \mathcal{L}_{\text{answer}} + \mathcal{L}_{\text{teacher}}
 $$
 
 #### 2. Hidden State Distillation Loss
+
 To ensure the implicit reasoning process captures meaningful semantics, we align the hidden states of the Implicit CoT Model (Answer Mode) with those of the Explicit CoT Model. This alignment is specifically performed on the hidden states corresponding to the generation of the final answer tokens.
 
 Let $H_{S, \text{ans}}^{(l)}$ and $H_{T, \text{ans}}^{(l)}$ be the hidden state representations for the answer tokens from the $l$-th layer of the student (Implicit Answer Mode) and teacher models, respectively. Since hidden state scales can vary across layers, we normalize the L1 distance for each layer by the standard deviation of the teacher's hidden states for that layer. The normalized L1 loss for the $l$-th layer is:
 $$
-\ell_{\text{distill}}^{(l)} = \frac{\|H_{S, \text{ans}}^{(l)} - H_{T, \text{ans}}^{(l)}\|_1}{\text{std}(H_{T, \text{ans}}^{(l)})}
+\ell_{\text{distill}}^{(l)} = \frac{\| H_{S, \text{ans}}^{(l)} - H_{T, \text{ans}}^{(l)} \|_1}{\text{std}(H_{T, \text{ans}}^{(l)})}
 $$
 
 The final distillation loss, $\mathcal{L}_{\text{distill}}$, is the mean of these normalized losses across all $L$ layers of the model:
@@ -61,7 +62,7 @@ $$
 
 The final training objective is a weighted combination of the task loss and the distillation loss:
 $$
-\mathcal{L}_{\text{total}} = \mathcal{L}_{\text{task}} + 10 * \mathcal{L}_{\text{distill}}
+\mathcal{L}_{\text{total}} = \mathcal{L}_{\text{task}} + 10 \cdot \mathcal{L}_{\text{distill}}
 $$
 
 ## Quick Start

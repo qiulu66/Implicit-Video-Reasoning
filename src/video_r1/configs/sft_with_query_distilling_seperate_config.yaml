@@ -1,0 +1,25 @@
+output_dir: "./local_weights/sft_with_query_8_distilling_seperate"
+mode: "distilling"
+learnable_query_num: 8
+model_name_or_path: "./pretrained/Qwen2.5-VL-7B-Instruct"
+dataset_name: "./Video-R1-data/Video-R1-COT-165k.json"
+dataset_path: "./Video-R1-data/"
+per_device_train_batch_size: 1
+gradient_accumulation_steps: 2
+learning_rate: 1e-6
+warmup_steps: 1000
+log_level: info
+logging_steps: 1
+logging_strategy: steps
+bf16: true
+torch_dtype: bfloat16
+# report_to: wandb
+report_to: "tensorboard"
+gradient_checkpointing: true
+# attn_implementation: flash_attention_2
+attn_implementation: sdpa
+num_train_epochs: 1
+run_name: sft_with_query_8_distilling_seperate
+save_steps: 1000
+max_grad_norm: 1
+save_only_model: false

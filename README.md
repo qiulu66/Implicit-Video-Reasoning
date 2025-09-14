@@ -4,7 +4,11 @@
 Chain-of-Thought (CoT) reasoning has garnered significant attention in the field of Multimodal Large Language Models (MLLMs), substantially enhancing their capabilities in complex reasoning tasks. However, explicit CoT methods face two primary challenges: (1) the generation of lengthy and verbose thought chains increases inference latency, reducing the model's responsiveness; (2) the reasoning process is constrained to the token-level text space, which hinders the model's ability to learn higher-level, more abstract patterns of thought.
 
 ## Methods
-![image](assets/teaser.pdf)
+<div>
+<p align="center">
+  <img src="./assets/teaser.png" width="100%" height="100%" />
+</p>
+</div>
 
 Inspired by research on latent CoT (e.g., [Coconut](https://arxiv.org/abs/2412.06769)), we introduce the paradigm of Implicit CoT to the domain of video reasoning, replacing explicit textual chains with implicit tokens. Our method aims not only to improve inference efficiency but also to enable the model to capture abstract reasoning processes that transcend textual representation. We fine-tune the Qwen-2.5-VL model using a unique training mechanism where a distillation loss from an explicit CoT teacher guides the implicit reasoning process to emulate its patterns. A key feature of our approach is that these implicit states (represented by implicit tokens) can be decoded into human-readable text, enhancing model interpretability.
 

@@ -24,7 +24,7 @@ Our model is trained end-to-end with a composite objective function. The total t
 
 This loss ensures the model generates the correct CoT explanations and final answers across the three forward passes.
 
-- Decoder Mode Loss (${L}_{\text{decode}}$): Trains the model to reconstruct the explicit CoT text ($Y_{\text{cot}}$) from the implicit tokens.
+- Decoder Mode Loss ($L_{\text{decode}}$): Trains the model to reconstruct the explicit CoT text ($Y_{cot}$) from the implicit tokens.
     $$
     {L}_{\text{decode}} = -\sum_{t=1}^{|Y_{\text{cot}}|} \log P(y_t^{\text{cot}} | y_{<t}^{\text{cot}}, \text{pause}; \theta)
     $$
